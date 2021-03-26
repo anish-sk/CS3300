@@ -1,0 +1,9 @@
+                children[1].a = $2.max; children[1].b = $2.maxending;
+                children[2].a = $3.max; children[2].b = $3.maxending;
+                children[3].a = $4.max; children[3].b = $4.maxending;
+                children[4].a = $5.max; children[4].b = $5.maxending;
+                children[5].a = $6.max; children[5].b = $6.maxending;
+                children[6].a = $7.max; children[6].b = $7.maxending;
+                children[7].a = $8.max; children[7].b = $8.maxending;
+                children[8].a = $9.max; children[8].b = $9.maxending;
+

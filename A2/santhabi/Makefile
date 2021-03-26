@@ -1,0 +1,12 @@
+a.out: y.tab.c lex.yy.c
+	gcc -o san -O3 lex.yy.c y.tab.c
+	@echo "Run the program as ./a.out [input_file]"
+
+y.tab.c: Ass2.y 
+	yacc -d Ass2.y 
+
+lex.yy.c: Ass2.l y.tab.h
+	lex Ass2.l
+
+clean:
+	@rm lex.yy.c y.tab.h y.tab.c a.out

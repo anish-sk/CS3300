@@ -1,0 +1,23 @@
+unused-vars
+
+if-simpl
+
+strength-reduction
+
+constant-folding
+8 1056
+10 992
+14 32768
+16 32
+
+constant-propagation
+8 bread 1024 butter 32 
+9 coffee 1056 
+10 bread 1024 butter 32 
+11 coffee 992 
+14 bread 1024 butter 32 
+15 coffee 32768 
+16 bread 1024 butter 32 
+17 coffee 32 
+
+cse

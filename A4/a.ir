@@ -1,0 +1,26 @@
+main:
+x_main_1 = 10
+scanf y_main_1
+$t1 = 10 PLUS y_main_1
+$t3 = $t1 MULT $t1
+z_main_1 = $t3
+$t4 = y_main_1 EQEQ 1
+ifFalse $t4 goto .L1
+scanf x_main_1
+$t5 = x_main_1 PLUS y_main_1
+$t6 = x_main_1 PLUS y_main_1
+$t7 = $t5 MULT $t6
+y_main_1 = $t7
+printf x_main_1
+printf y_main_1
+goto .L2
+.L1:
+$t8 = 10 PLUS y_main_1
+$t9 = 10 PLUS y_main_1
+$t10 = $t8 MULT $t9
+y_main_1 = $t10
+printf x_main_1
+printf y_main_1
+.L2:
+return 0
+end
