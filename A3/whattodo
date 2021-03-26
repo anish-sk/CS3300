@@ -1,0 +1,19 @@
+initialize funcdetails with params, along with isarray
+using arglist populate funcdetails
+evaluate compound statement
+
+
+doubts:
+1. are global variables allowed nope
+2. do we have to handle shadowing of declaration,  i.e, a variable of same name occuring in a nested block nope
+3. do we have array parameters in function call nope
+
+in function call
+create a new node of funcdetails.
+fill in its symbol table with argument values;
+push current_function onto stack
+push 0 onto return stack
+set current_function to the node just created;
+call function
+pop return value and give it to the expr->val
+pop fstack and set curr_node

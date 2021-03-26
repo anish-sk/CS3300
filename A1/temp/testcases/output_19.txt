@@ -1,0 +1,7 @@
+***parsing successful***
+#global_declarations = 5
+#function_definitions = 5
+#integer_constants = 155
+#pointers_declarations = 0
+#ifs_without_else = 15
+if-else max-depth = 17

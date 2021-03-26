@@ -1,0 +1,4899 @@
+Terminals unused in grammar
+
+   ERR
+
+
+State 61 conflicts: 1 shift/reduce
+State 123 conflicts: 2 shift/reduce
+State 125 conflicts: 1 shift/reduce
+State 134 conflicts: 1 shift/reduce
+State 143 conflicts: 20 shift/reduce
+State 144 conflicts: 20 shift/reduce
+State 145 conflicts: 20 shift/reduce
+State 146 conflicts: 20 shift/reduce
+State 183 conflicts: 36 shift/reduce
+State 241 conflicts: 21 shift/reduce
+State 253 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: declaration_list
+
+    2 declaration_list: declaration
+
+    3 @1: %empty
+
+    4 declaration_list: declaration @1 declaration_list
+
+    5 declaration: var_declaration
+    6            | fun_declaration
+    7            | fun_prototype
+    8            | struct_definition
+
+    9 var_declaration: type var_list
+
+   10 svar_declaration: type svar_list
+
+   11 svar_declaration_list: svar_declaration
+   12                      | svar_declaration svar_declaration_list
+
+   13 basic_type: INT
+   14           | FLOAT
+   15           | CHAR
+   16           | VOID
+   17           | STRUCT VARIABLE
+   18           | LONG
+   19           | SHORT
+   20           | EXTERN
+   21           | DOUBLE
+
+   22 type: basic_type
+   23     | type basic_type
+
+   24 pointer_type: type
+   25             | type stars
+
+   26 stars: MUL
+   27      | MUL stars
+
+   28 $@2: %empty
+
+   29 var_list: var_dec $@2 SCOLON
+
+   30 $@3: %empty
+
+   31 var_list: var_dec $@3 COM var_list
+
+   32 $@4: %empty
+
+   33 svar_list: svar_dec $@4 SCOLON
+
+   34 $@5: %empty
+
+   35 svar_list: svar_dec $@5 COM svar_list
+
+   36 var_dec: var_dec_lhs
+   37        | var_dec_lhs EQ expression
+
+   38 svar_dec: var_dec_lhs
+
+   39 var_dec_lhs: var_id
+   40            | var_id LSQ expression RSQ
+
+   41 var_id: VARIABLE
+
+   42 $@6: %empty
+
+   43 var_id: MUL $@6 var_id
+
+   44 fun_declaration: type var_id LPA proto_param_list RPA compound_statement
+
+   45 fun_prototype: type var_id LPA proto_param_list RPA SCOLON
+
+   46 proto_param_list: %empty
+   47                 | proto_params
+   48                 | proto_params COM proto_param_list
+
+   49 proto_params: pointer_type
+   50             | type var_id
+   51             | type var_id nd_bracket
+
+   52 nd_bracket: LSQ RSQ
+   53           | nd_bracket LSQ RSQ
+
+   54 struct_definition: STRUCT VARIABLE LCU svar_declaration_list RCU SCOLON
+   55                  | STRUCT VARIABLE LCU svar_declaration_list RCU var_list
+
+   56 decl_statement: var_declaration
+   57               | struct_definition
+
+   58 statement_list: statement
+   59               | statement statement_list
+
+   60 compound_statement: LCU RCU
+   61                   | LCU statement_list RCU
+
+   62 statement: compound_statement
+   63          | decl_statement
+   64          | if_statement
+   65          | while_statement
+   66          | switch_statement
+   67          | return_statement
+   68          | break_statement
+   69          | case_statement
+   70          | assign_statement
+   71          | for_statement
+   72          | continue_statement
+   73          | default_statement
+   74          | do_statement
+   75          | expression_statement
+   76          | SCOLON
+
+   77 lstatement: compound_statement
+   78           | if_statement
+   79           | while_statement
+   80           | switch_statement
+   81           | return_statement
+   82           | break_statement
+   83           | case_statement
+   84           | assign_statement
+   85           | for_statement
+   86           | continue_statement
+   87           | default_statement
+   88           | do_statement
+   89           | expression_statement
+   90           | SCOLON
+
+   91 if_statement: IF LPA expression RPA lstatement
+   92             | IF LPA expression RPA lstatement ELSE lstatement
+
+   93 while_statement: WHILE LPA expression RPA lstatement
+
+   94 switch_statement: SWITCH LPA expression RPA lstatement
+
+   95 return_statement: RETURN SCOLON
+   96                 | RETURN expression SCOLON
+
+   97 case_statement: CASE expression COL statement_list
+
+   98 continue_statement: CONTINUE SCOLON
+
+   99 break_statement: BREAK SCOLON
+
+  100 default_statement: DEFAULT COL statement_list
+
+  101 assign_statement: term EQ expression SCOLON
+
+  102 exp_wrap: %empty
+  103         | expression
+
+  104 for_statement: FOR LPA exp_wrap SCOLON exp_wrap SCOLON exp_wrap RPA lstatement
+  105              | FOR LPA var_declaration exp_wrap SCOLON exp_wrap RPA lstatement
+
+  106 do_statement: DO lstatement WHILE LPA expression RPA SCOLON
+
+  107 expression: term EQ expression
+  108           | expression binary_operator expression
+  109           | expression relational_operator expression
+  110           | expression logical_operator expression
+  111           | cast_expression term
+  112           | term
+
+  113 cast_expression: LPA pointer_type RPA
+
+  114 term: SUB term
+  115     | ADD term
+  116     | unary_operator term
+  117     | MUL term
+  118     | BAND term
+  119     | term PINC
+  120     | term PDEC
+  121     | PINC term
+  122     | PDEC term
+  123     | SIZEOF LPA term RPA
+  124     | SIZEOF LPA pointer_type RPA
+  125     | lhs
+  126     | constants
+  127     | function_call
+  128     | LPA expression RPA
+  129     | LCU expression RCU
+
+  130 lhs: VARIABLE
+  131    | lhs LSQ expression RSQ
+
+  132 function_call: VARIABLE LPA arguments RPA
+
+  133 arguments: argument_list
+  134          | %empty
+
+  135 argument_list: expression
+  136              | argument_list COM expression
+
+  137 expression_statement: expression SCOLON
+
+  138 constants: ICONST
+  139          | CCONST
+  140          | FCONST
+  141          | multisconsts
+
+  142 multisconsts: SCONST
+  143             | SCONST multisconsts
+
+  144 binary_operator: ADD
+  145                | SUB
+  146                | MUL
+  147                | DIV
+  148                | MOD
+  149                | BAND
+  150                | BOR
+  151                | XOR
+  152                | TWAY
+  153                | ARROW
+  154                | DOT
+  155                | COM
+
+  156 relational_operator: EEQ
+  157                    | LEQ
+  158                    | LESS
+  159                    | GRTR
+  160                    | GEQ
+  161                    | NEQ
+
+  162 logical_operator: AND
+  163                 | OR
+
+  164 unary_operator: NEG
+  165               | NOT
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+VARIABLE (258) 17 41 54 55 130 132
+BREAK (259) 99
+CASE (260) 97
+CHAR (261) 15
+COL (262) 97 100
+COM (263) 31 35 48 136 155
+CONTINUE (264) 98
+DEFAULT (265) 100
+DO (266) 106
+DOUBLE (267) 21
+ELSE (268) 92
+ERR (269)
+EXTERN (270) 20
+FLOAT (271) 14
+FOR (272) 104 105
+IF (273) 91 92
+INT (274) 13
+LONG (275) 18
+RETURN (276) 95 96
+SHORT (277) 19
+SIZEOF (278) 123 124
+STRUCT (279) 17 54 55
+SWITCH (280) 94
+VOID (281) 16
+WHILE (282) 93 106
+LSQ (283) 40 52 53 131
+RSQ (284) 40 52 53 131
+LPA (285) 44 45 91 92 93 94 104 105 106 113 123 124 128 132
+RPA (286) 44 45 91 92 93 94 104 105 106 113 123 124 128 132
+LCU (287) 54 55 60 61 129
+RCU (288) 54 55 60 61 129
+DOT (289) 154
+ARROW (290) 153
+PINC (291) 119 121
+PDEC (292) 120 122
+BAND (293) 118 149
+MUL (294) 26 27 43 117 146
+ADD (295) 115 144
+SUB (296) 114 145
+NEG (297) 164
+NOT (298) 165
+DIV (299) 147
+MOD (300) 148
+LESS (301) 158
+GRTR (302) 159
+LEQ (303) 157
+GEQ (304) 160
+EEQ (305) 156
+EQ (306) 37 101 107
+NEQ (307) 161
+XOR (308) 151
+OR (309) 163
+BOR (310) 150
+AND (311) 162
+TWAY (312) 152
+SCONST (313) 142 143
+SCOLON (314) 29 33 45 54 76 90 95 96 98 99 101 104 105 106 137
+FCONST (315) 140
+ICONST (316) 138
+CCONST (317) 139
+DUMMY (318)
+
+
+Nonterminals, with rules where they appear
+
+$accept (64)
+    on left: 0
+program (65)
+    on left: 1, on right: 0
+declaration_list (66)
+    on left: 2 4, on right: 1 4
+@1 (67)
+    on left: 3, on right: 4
+declaration (68)
+    on left: 5 6 7 8, on right: 2 4
+var_declaration (69)
+    on left: 9, on right: 5 56 105
+svar_declaration (70)
+    on left: 10, on right: 11 12
+svar_declaration_list (71)
+    on left: 11 12, on right: 12 54 55
+basic_type (72)
+    on left: 13 14 15 16 17 18 19 20 21, on right: 22 23
+type (73)
+    on left: 22 23, on right: 9 10 23 24 25 44 45 50 51
+pointer_type (74)
+    on left: 24 25, on right: 49 113 124
+stars (75)
+    on left: 26 27, on right: 25 27
+var_list (76)
+    on left: 29 31, on right: 9 31 55
+$@2 (77)
+    on left: 28, on right: 29
+$@3 (78)
+    on left: 30, on right: 31
+svar_list (79)
+    on left: 33 35, on right: 10 35
+$@4 (80)
+    on left: 32, on right: 33
+$@5 (81)
+    on left: 34, on right: 35
+var_dec (82)
+    on left: 36 37, on right: 29 31
+svar_dec (83)
+    on left: 38, on right: 33 35
+var_dec_lhs (84)
+    on left: 39 40, on right: 36 37 38
+var_id (85)
+    on left: 41 43, on right: 39 40 43 44 45 50 51
+$@6 (86)
+    on left: 42, on right: 43
+fun_declaration (87)
+    on left: 44, on right: 6
+fun_prototype (88)
+    on left: 45, on right: 7
+proto_param_list (89)
+    on left: 46 47 48, on right: 44 45 48
+proto_params (90)
+    on left: 49 50 51, on right: 47 48
+nd_bracket (91)
+    on left: 52 53, on right: 51 53
+struct_definition (92)
+    on left: 54 55, on right: 8 57
+decl_statement (93)
+    on left: 56 57, on right: 63
+statement_list (94)
+    on left: 58 59, on right: 59 61 97 100
+compound_statement (95)
+    on left: 60 61, on right: 44 62 77
+statement (96)
+    on left: 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76, on right:
+    58 59
+lstatement (97)
+    on left: 77 78 79 80 81 82 83 84 85 86 87 88 89 90, on right: 91
+    92 93 94 104 105 106
+if_statement (98)
+    on left: 91 92, on right: 64 78
+while_statement (99)
+    on left: 93, on right: 65 79
+switch_statement (100)
+    on left: 94, on right: 66 80
+return_statement (101)
+    on left: 95 96, on right: 67 81
+case_statement (102)
+    on left: 97, on right: 69 83
+continue_statement (103)
+    on left: 98, on right: 72 86
+break_statement (104)
+    on left: 99, on right: 68 82
+default_statement (105)
+    on left: 100, on right: 73 87
+assign_statement (106)
+    on left: 101, on right: 70 84
+exp_wrap (107)
+    on left: 102 103, on right: 104 105
+for_statement (108)
+    on left: 104 105, on right: 71 85
+do_statement (109)
+    on left: 106, on right: 74 88
+expression (110)
+    on left: 107 108 109 110 111 112, on right: 37 40 91 92 93 94 96
+    97 101 103 106 107 108 109 110 128 129 131 135 136 137
+cast_expression (111)
+    on left: 113, on right: 111
+term (112)
+    on left: 114 115 116 117 118 119 120 121 122 123 124 125 126 127
+    128 129, on right: 101 107 111 112 114 115 116 117 118 119 120
+    121 122 123
+lhs (113)
+    on left: 130 131, on right: 125 131
+function_call (114)
+    on left: 132, on right: 127
+arguments (115)
+    on left: 133 134, on right: 132
+argument_list (116)
+    on left: 135 136, on right: 133 136
+expression_statement (117)
+    on left: 137, on right: 75 89
+constants (118)
+    on left: 138 139 140 141, on right: 126
+multisconsts (119)
+    on left: 142 143, on right: 141 143
+binary_operator (120)
+    on left: 144 145 146 147 148 149 150 151 152 153 154 155, on right:
+    108
+relational_operator (121)
+    on left: 156 157 158 159 160 161, on right: 109
+logical_operator (122)
+    on left: 162 163, on right: 110
+unary_operator (123)
+    on left: 164 165, on right: 116
+
+
+State 0
+
+    0 $accept: . program $end
+
+    CHAR    shift, and go to state 1
+    DOUBLE  shift, and go to state 2
+    EXTERN  shift, and go to state 3
+    FLOAT   shift, and go to state 4
+    INT     shift, and go to state 5
+    LONG    shift, and go to state 6
+    SHORT   shift, and go to state 7
+    STRUCT  shift, and go to state 8
+    VOID    shift, and go to state 9
+
+    program            go to state 10
+    declaration_list   go to state 11
+    declaration        go to state 12
+    var_declaration    go to state 13
+    basic_type         go to state 14
+    type               go to state 15
+    fun_declaration    go to state 16
+    fun_prototype      go to state 17
+    struct_definition  go to state 18
+
+
+State 1
+
+   15 basic_type: CHAR .
+
+    $default  reduce using rule 15 (basic_type)
+
+
+State 2
+
+   21 basic_type: DOUBLE .
+
+    $default  reduce using rule 21 (basic_type)
+
+
+State 3
+
+   20 basic_type: EXTERN .
+
+    $default  reduce using rule 20 (basic_type)
+
+
+State 4
+
+   14 basic_type: FLOAT .
+
+    $default  reduce using rule 14 (basic_type)
+
+
+State 5
+
+   13 basic_type: INT .
+
+    $default  reduce using rule 13 (basic_type)
+
+
+State 6
+
+   18 basic_type: LONG .
+
+    $default  reduce using rule 18 (basic_type)
+
+
+State 7
+
+   19 basic_type: SHORT .
+
+    $default  reduce using rule 19 (basic_type)
+
+
+State 8
+
+   17 basic_type: STRUCT . VARIABLE
+   54 struct_definition: STRUCT . VARIABLE LCU svar_declaration_list RCU SCOLON
+   55                  | STRUCT . VARIABLE LCU svar_declaration_list RCU var_list
+
+    VARIABLE  shift, and go to state 19
+
+
+State 9
+
+   16 basic_type: VOID .
+
+    $default  reduce using rule 16 (basic_type)
+
+
+State 10
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 20
+
+
+State 11
+
+    1 program: declaration_list .
+
+    $default  reduce using rule 1 (program)
+
+
+State 12
+
+    2 declaration_list: declaration .
+    4                 | declaration . @1 declaration_list
+
+    $end      reduce using rule 2 (declaration_list)
+    $default  reduce using rule 3 (@1)
+
+    @1  go to state 21
+
+
+State 13
+
+    5 declaration: var_declaration .
+
+    $default  reduce using rule 5 (declaration)
+
+
+State 14
+
+   22 type: basic_type .
+
+    $default  reduce using rule 22 (type)
+
+
+State 15
+
+    9 var_declaration: type . var_list
+   23 type: type . basic_type
+   44 fun_declaration: type . var_id LPA proto_param_list RPA compound_statement
+   45 fun_prototype: type . var_id LPA proto_param_list RPA SCOLON
+
+    VARIABLE  shift, and go to state 22
+    CHAR      shift, and go to state 1
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    SHORT     shift, and go to state 7
+    STRUCT    shift, and go to state 23
+    VOID      shift, and go to state 9
+    MUL       shift, and go to state 24
+
+    basic_type   go to state 25
+    var_list     go to state 26
+    var_dec      go to state 27
+    var_dec_lhs  go to state 28
+    var_id       go to state 29
+
+
+State 16
+
+    6 declaration: fun_declaration .
+
+    $default  reduce using rule 6 (declaration)
+
+
+State 17
+
+    7 declaration: fun_prototype .
+
+    $default  reduce using rule 7 (declaration)
+
+
+State 18
+
+    8 declaration: struct_definition .
+
+    $default  reduce using rule 8 (declaration)
+
+
+State 19
+
+   17 basic_type: STRUCT VARIABLE .
+   54 struct_definition: STRUCT VARIABLE . LCU svar_declaration_list RCU SCOLON
+   55                  | STRUCT VARIABLE . LCU svar_declaration_list RCU var_list
+
+    LCU  shift, and go to state 30
+
+    $default  reduce using rule 17 (basic_type)
+
+
+State 20
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 21
+
+    4 declaration_list: declaration @1 . declaration_list
+
+    CHAR    shift, and go to state 1
+    DOUBLE  shift, and go to state 2
+    EXTERN  shift, and go to state 3
+    FLOAT   shift, and go to state 4
+    INT     shift, and go to state 5
+    LONG    shift, and go to state 6
+    SHORT   shift, and go to state 7
+    STRUCT  shift, and go to state 8
+    VOID    shift, and go to state 9
+
+    declaration_list   go to state 31
+    declaration        go to state 12
+    var_declaration    go to state 13
+    basic_type         go to state 14
+    type               go to state 15
+    fun_declaration    go to state 16
+    fun_prototype      go to state 17
+    struct_definition  go to state 18
+
+
+State 22
+
+   41 var_id: VARIABLE .
+
+    $default  reduce using rule 41 (var_id)
+
+
+State 23
+
+   17 basic_type: STRUCT . VARIABLE
+
+    VARIABLE  shift, and go to state 32
+
+
+State 24
+
+   43 var_id: MUL . $@6 var_id
+
+    $default  reduce using rule 42 ($@6)
+
+    $@6  go to state 33
+
+
+State 25
+
+   23 type: type basic_type .
+
+    $default  reduce using rule 23 (type)
+
+
+State 26
+
+    9 var_declaration: type var_list .
+
+    $default  reduce using rule 9 (var_declaration)
+
+
+State 27
+
+   29 var_list: var_dec . $@2 SCOLON
+   31         | var_dec . $@3 COM var_list
+
+    COM       reduce using rule 30 ($@3)
+    $default  reduce using rule 28 ($@2)
+
+    $@2  go to state 34
+    $@3  go to state 35
+
+
+State 28
+
+   36 var_dec: var_dec_lhs .
+   37        | var_dec_lhs . EQ expression
+
+    EQ  shift, and go to state 36
+
+    $default  reduce using rule 36 (var_dec)
+
+
+State 29
+
+   39 var_dec_lhs: var_id .
+   40            | var_id . LSQ expression RSQ
+   44 fun_declaration: type var_id . LPA proto_param_list RPA compound_statement
+   45 fun_prototype: type var_id . LPA proto_param_list RPA SCOLON
+
+    LSQ  shift, and go to state 37
+    LPA  shift, and go to state 38
+
+    $default  reduce using rule 39 (var_dec_lhs)
+
+
+State 30
+
+   54 struct_definition: STRUCT VARIABLE LCU . svar_declaration_list RCU SCOLON
+   55                  | STRUCT VARIABLE LCU . svar_declaration_list RCU var_list
+
+    CHAR    shift, and go to state 1
+    DOUBLE  shift, and go to state 2
+    EXTERN  shift, and go to state 3
+    FLOAT   shift, and go to state 4
+    INT     shift, and go to state 5
+    LONG    shift, and go to state 6
+    SHORT   shift, and go to state 7
+    STRUCT  shift, and go to state 23
+    VOID    shift, and go to state 9
+
+    svar_declaration       go to state 39
+    svar_declaration_list  go to state 40
+    basic_type             go to state 14
+    type                   go to state 41
+
+
+State 31
+
+    4 declaration_list: declaration @1 declaration_list .
+
+    $default  reduce using rule 4 (declaration_list)
+
+
+State 32
+
+   17 basic_type: STRUCT VARIABLE .
+
+    $default  reduce using rule 17 (basic_type)
+
+
+State 33
+
+   43 var_id: MUL $@6 . var_id
+
+    VARIABLE  shift, and go to state 22
+    MUL       shift, and go to state 24
+
+    var_id  go to state 42
+
+
+State 34
+
+   29 var_list: var_dec $@2 . SCOLON
+
+    SCOLON  shift, and go to state 43
+
+
+State 35
+
+   31 var_list: var_dec $@3 . COM var_list
+
+    COM  shift, and go to state 44
+
+
+State 36
+
+   37 var_dec: var_dec_lhs EQ . expression
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 61
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 37
+
+   40 var_dec_lhs: var_id LSQ . expression RSQ
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 69
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 38
+
+   44 fun_declaration: type var_id LPA . proto_param_list RPA compound_statement
+   45 fun_prototype: type var_id LPA . proto_param_list RPA SCOLON
+
+    CHAR    shift, and go to state 1
+    DOUBLE  shift, and go to state 2
+    EXTERN  shift, and go to state 3
+    FLOAT   shift, and go to state 4
+    INT     shift, and go to state 5
+    LONG    shift, and go to state 6
+    SHORT   shift, and go to state 7
+    STRUCT  shift, and go to state 23
+    VOID    shift, and go to state 9
+
+    $default  reduce using rule 46 (proto_param_list)
+
+    basic_type        go to state 14
+    type              go to state 70
+    pointer_type      go to state 71
+    proto_param_list  go to state 72
+    proto_params      go to state 73
+
+
+State 39
+
+   11 svar_declaration_list: svar_declaration .
+   12                      | svar_declaration . svar_declaration_list
+
+    CHAR    shift, and go to state 1
+    DOUBLE  shift, and go to state 2
+    EXTERN  shift, and go to state 3
+    FLOAT   shift, and go to state 4
+    INT     shift, and go to state 5
+    LONG    shift, and go to state 6
+    SHORT   shift, and go to state 7
+    STRUCT  shift, and go to state 23
+    VOID    shift, and go to state 9
+
+    $default  reduce using rule 11 (svar_declaration_list)
+
+    svar_declaration       go to state 39
+    svar_declaration_list  go to state 74
+    basic_type             go to state 14
+    type                   go to state 41
+
+
+State 40
+
+   54 struct_definition: STRUCT VARIABLE LCU svar_declaration_list . RCU SCOLON
+   55                  | STRUCT VARIABLE LCU svar_declaration_list . RCU var_list
+
+    RCU  shift, and go to state 75
+
+
+State 41
+
+   10 svar_declaration: type . svar_list
+   23 type: type . basic_type
+
+    VARIABLE  shift, and go to state 22
+    CHAR      shift, and go to state 1
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    SHORT     shift, and go to state 7
+    STRUCT    shift, and go to state 23
+    VOID      shift, and go to state 9
+    MUL       shift, and go to state 24
+
+    basic_type   go to state 25
+    svar_list    go to state 76
+    svar_dec     go to state 77
+    var_dec_lhs  go to state 78
+    var_id       go to state 79
+
+
+State 42
+
+   43 var_id: MUL $@6 var_id .
+
+    $default  reduce using rule 43 (var_id)
+
+
+State 43
+
+   29 var_list: var_dec $@2 SCOLON .
+
+    $default  reduce using rule 29 (var_list)
+
+
+State 44
+
+   31 var_list: var_dec $@3 COM . var_list
+
+    VARIABLE  shift, and go to state 22
+    MUL       shift, and go to state 24
+
+    var_list     go to state 80
+    var_dec      go to state 27
+    var_dec_lhs  go to state 28
+    var_id       go to state 79
+
+
+State 45
+
+  130 lhs: VARIABLE .
+  132 function_call: VARIABLE . LPA arguments RPA
+
+    LPA  shift, and go to state 81
+
+    $default  reduce using rule 130 (lhs)
+
+
+State 46
+
+  123 term: SIZEOF . LPA term RPA
+  124     | SIZEOF . LPA pointer_type RPA
+
+    LPA  shift, and go to state 82
+
+
+State 47
+
+  113 cast_expression: LPA . pointer_type RPA
+  128 term: LPA . expression RPA
+
+    VARIABLE  shift, and go to state 45
+    CHAR      shift, and go to state 1
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    SHORT     shift, and go to state 7
+    SIZEOF    shift, and go to state 46
+    STRUCT    shift, and go to state 23
+    VOID      shift, and go to state 9
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    basic_type       go to state 14
+    type             go to state 83
+    pointer_type     go to state 84
+    expression       go to state 85
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 48
+
+  129 term: LCU . expression RCU
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 86
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 49
+
+  121 term: PINC . term
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 87
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    term            go to state 88
+    lhs             go to state 64
+    function_call   go to state 65
+    constants       go to state 66
+    multisconsts    go to state 67
+    unary_operator  go to state 68
+
+
+State 50
+
+  122 term: PDEC . term
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 87
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    term            go to state 89
+    lhs             go to state 64
+    function_call   go to state 65
+    constants       go to state 66
+    multisconsts    go to state 67
+    unary_operator  go to state 68
+
+
+State 51
+
+  118 term: BAND . term
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 87
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    term            go to state 90
+    lhs             go to state 64
+    function_call   go to state 65
+    constants       go to state 66
+    multisconsts    go to state 67
+    unary_operator  go to state 68
+
+
+State 52
+
+  117 term: MUL . term
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 87
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    term            go to state 91
+    lhs             go to state 64
+    function_call   go to state 65
+    constants       go to state 66
+    multisconsts    go to state 67
+    unary_operator  go to state 68
+
+
+State 53
+
+  115 term: ADD . term
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 87
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    term            go to state 92
+    lhs             go to state 64
+    function_call   go to state 65
+    constants       go to state 66
+    multisconsts    go to state 67
+    unary_operator  go to state 68
+
+
+State 54
+
+  114 term: SUB . term
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 87
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    term            go to state 93
+    lhs             go to state 64
+    function_call   go to state 65
+    constants       go to state 66
+    multisconsts    go to state 67
+    unary_operator  go to state 68
+
+
+State 55
+
+  164 unary_operator: NEG .
+
+    $default  reduce using rule 164 (unary_operator)
+
+
+State 56
+
+  165 unary_operator: NOT .
+
+    $default  reduce using rule 165 (unary_operator)
+
+
+State 57
+
+  142 multisconsts: SCONST .
+  143             | SCONST . multisconsts
+
+    SCONST  shift, and go to state 57
+
+    $default  reduce using rule 142 (multisconsts)
+
+    multisconsts  go to state 94
+
+
+State 58
+
+  140 constants: FCONST .
+
+    $default  reduce using rule 140 (constants)
+
+
+State 59
+
+  138 constants: ICONST .
+
+    $default  reduce using rule 138 (constants)
+
+
+State 60
+
+  139 constants: CCONST .
+
+    $default  reduce using rule 139 (constants)
+
+
+State 61
+
+   37 var_dec: var_dec_lhs EQ expression .
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    COM       [reduce using rule 37 (var_dec)]
+    $default  reduce using rule 37 (var_dec)
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 62
+
+  111 expression: cast_expression . term
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 87
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    term            go to state 118
+    lhs             go to state 64
+    function_call   go to state 65
+    constants       go to state 66
+    multisconsts    go to state 67
+    unary_operator  go to state 68
+
+
+State 63
+
+  107 expression: term . EQ expression
+  112           | term .
+  119 term: term . PINC
+  120     | term . PDEC
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+    EQ    shift, and go to state 121
+
+    $default  reduce using rule 112 (expression)
+
+
+State 64
+
+  125 term: lhs .
+  131 lhs: lhs . LSQ expression RSQ
+
+    LSQ  shift, and go to state 122
+
+    $default  reduce using rule 125 (term)
+
+
+State 65
+
+  127 term: function_call .
+
+    $default  reduce using rule 127 (term)
+
+
+State 66
+
+  126 term: constants .
+
+    $default  reduce using rule 126 (term)
+
+
+State 67
+
+  141 constants: multisconsts .
+
+    $default  reduce using rule 141 (constants)
+
+
+State 68
+
+  116 term: unary_operator . term
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 87
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    term            go to state 123
+    lhs             go to state 64
+    function_call   go to state 65
+    constants       go to state 66
+    multisconsts    go to state 67
+    unary_operator  go to state 68
+
+
+State 69
+
+   40 var_dec_lhs: var_id LSQ expression . RSQ
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    RSQ    shift, and go to state 124
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 70
+
+   23 type: type . basic_type
+   24 pointer_type: type .
+   25             | type . stars
+   50 proto_params: type . var_id
+   51             | type . var_id nd_bracket
+
+    VARIABLE  shift, and go to state 22
+    CHAR      shift, and go to state 1
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    SHORT     shift, and go to state 7
+    STRUCT    shift, and go to state 23
+    VOID      shift, and go to state 9
+    MUL       shift, and go to state 125
+
+    $default  reduce using rule 24 (pointer_type)
+
+    basic_type  go to state 25
+    stars       go to state 126
+    var_id      go to state 127
+
+
+State 71
+
+   49 proto_params: pointer_type .
+
+    $default  reduce using rule 49 (proto_params)
+
+
+State 72
+
+   44 fun_declaration: type var_id LPA proto_param_list . RPA compound_statement
+   45 fun_prototype: type var_id LPA proto_param_list . RPA SCOLON
+
+    RPA  shift, and go to state 128
+
+
+State 73
+
+   47 proto_param_list: proto_params .
+   48                 | proto_params . COM proto_param_list
+
+    COM  shift, and go to state 129
+
+    $default  reduce using rule 47 (proto_param_list)
+
+
+State 74
+
+   12 svar_declaration_list: svar_declaration svar_declaration_list .
+
+    $default  reduce using rule 12 (svar_declaration_list)
+
+
+State 75
+
+   54 struct_definition: STRUCT VARIABLE LCU svar_declaration_list RCU . SCOLON
+   55                  | STRUCT VARIABLE LCU svar_declaration_list RCU . var_list
+
+    VARIABLE  shift, and go to state 22
+    MUL       shift, and go to state 24
+    SCOLON    shift, and go to state 130
+
+    var_list     go to state 131
+    var_dec      go to state 27
+    var_dec_lhs  go to state 28
+    var_id       go to state 79
+
+
+State 76
+
+   10 svar_declaration: type svar_list .
+
+    $default  reduce using rule 10 (svar_declaration)
+
+
+State 77
+
+   33 svar_list: svar_dec . $@4 SCOLON
+   35          | svar_dec . $@5 COM svar_list
+
+    COM       reduce using rule 34 ($@5)
+    $default  reduce using rule 32 ($@4)
+
+    $@4  go to state 132
+    $@5  go to state 133
+
+
+State 78
+
+   38 svar_dec: var_dec_lhs .
+
+    $default  reduce using rule 38 (svar_dec)
+
+
+State 79
+
+   39 var_dec_lhs: var_id .
+   40            | var_id . LSQ expression RSQ
+
+    LSQ  shift, and go to state 37
+
+    $default  reduce using rule 39 (var_dec_lhs)
+
+
+State 80
+
+   31 var_list: var_dec $@3 COM var_list .
+
+    $default  reduce using rule 31 (var_list)
+
+
+State 81
+
+  132 function_call: VARIABLE LPA . arguments RPA
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    $default  reduce using rule 134 (arguments)
+
+    expression       go to state 134
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    arguments        go to state 135
+    argument_list    go to state 136
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 82
+
+  123 term: SIZEOF LPA . term RPA
+  124     | SIZEOF LPA . pointer_type RPA
+
+    VARIABLE  shift, and go to state 45
+    CHAR      shift, and go to state 1
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    SHORT     shift, and go to state 7
+    SIZEOF    shift, and go to state 46
+    STRUCT    shift, and go to state 23
+    VOID      shift, and go to state 9
+    LPA       shift, and go to state 87
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    basic_type      go to state 14
+    type            go to state 83
+    pointer_type    go to state 137
+    term            go to state 138
+    lhs             go to state 64
+    function_call   go to state 65
+    constants       go to state 66
+    multisconsts    go to state 67
+    unary_operator  go to state 68
+
+
+State 83
+
+   23 type: type . basic_type
+   24 pointer_type: type .
+   25             | type . stars
+
+    CHAR    shift, and go to state 1
+    DOUBLE  shift, and go to state 2
+    EXTERN  shift, and go to state 3
+    FLOAT   shift, and go to state 4
+    INT     shift, and go to state 5
+    LONG    shift, and go to state 6
+    SHORT   shift, and go to state 7
+    STRUCT  shift, and go to state 23
+    VOID    shift, and go to state 9
+    MUL     shift, and go to state 139
+
+    $default  reduce using rule 24 (pointer_type)
+
+    basic_type  go to state 25
+    stars       go to state 126
+
+
+State 84
+
+  113 cast_expression: LPA pointer_type . RPA
+
+    RPA  shift, and go to state 140
+
+
+State 85
+
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+  128 term: LPA expression . RPA
+
+    COM    shift, and go to state 95
+    RPA    shift, and go to state 141
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 86
+
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+  129 term: LCU expression . RCU
+
+    COM    shift, and go to state 95
+    RCU    shift, and go to state 142
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 87
+
+  128 term: LPA . expression RPA
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 85
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 88
+
+  119 term: term . PINC
+  120     | term . PDEC
+  121     | PINC term .
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+
+    $default  reduce using rule 121 (term)
+
+
+State 89
+
+  119 term: term . PINC
+  120     | term . PDEC
+  122     | PDEC term .
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+
+    $default  reduce using rule 122 (term)
+
+
+State 90
+
+  118 term: BAND term .
+  119     | term . PINC
+  120     | term . PDEC
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+
+    $default  reduce using rule 118 (term)
+
+
+State 91
+
+  117 term: MUL term .
+  119     | term . PINC
+  120     | term . PDEC
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+
+    $default  reduce using rule 117 (term)
+
+
+State 92
+
+  115 term: ADD term .
+  119     | term . PINC
+  120     | term . PDEC
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+
+    $default  reduce using rule 115 (term)
+
+
+State 93
+
+  114 term: SUB term .
+  119     | term . PINC
+  120     | term . PDEC
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+
+    $default  reduce using rule 114 (term)
+
+
+State 94
+
+  143 multisconsts: SCONST multisconsts .
+
+    $default  reduce using rule 143 (multisconsts)
+
+
+State 95
+
+  155 binary_operator: COM .
+
+    $default  reduce using rule 155 (binary_operator)
+
+
+State 96
+
+  154 binary_operator: DOT .
+
+    $default  reduce using rule 154 (binary_operator)
+
+
+State 97
+
+  153 binary_operator: ARROW .
+
+    $default  reduce using rule 153 (binary_operator)
+
+
+State 98
+
+  149 binary_operator: BAND .
+
+    $default  reduce using rule 149 (binary_operator)
+
+
+State 99
+
+  146 binary_operator: MUL .
+
+    $default  reduce using rule 146 (binary_operator)
+
+
+State 100
+
+  144 binary_operator: ADD .
+
+    $default  reduce using rule 144 (binary_operator)
+
+
+State 101
+
+  145 binary_operator: SUB .
+
+    $default  reduce using rule 145 (binary_operator)
+
+
+State 102
+
+  147 binary_operator: DIV .
+
+    $default  reduce using rule 147 (binary_operator)
+
+
+State 103
+
+  148 binary_operator: MOD .
+
+    $default  reduce using rule 148 (binary_operator)
+
+
+State 104
+
+  158 relational_operator: LESS .
+
+    $default  reduce using rule 158 (relational_operator)
+
+
+State 105
+
+  159 relational_operator: GRTR .
+
+    $default  reduce using rule 159 (relational_operator)
+
+
+State 106
+
+  157 relational_operator: LEQ .
+
+    $default  reduce using rule 157 (relational_operator)
+
+
+State 107
+
+  160 relational_operator: GEQ .
+
+    $default  reduce using rule 160 (relational_operator)
+
+
+State 108
+
+  156 relational_operator: EEQ .
+
+    $default  reduce using rule 156 (relational_operator)
+
+
+State 109
+
+  161 relational_operator: NEQ .
+
+    $default  reduce using rule 161 (relational_operator)
+
+
+State 110
+
+  151 binary_operator: XOR .
+
+    $default  reduce using rule 151 (binary_operator)
+
+
+State 111
+
+  163 logical_operator: OR .
+
+    $default  reduce using rule 163 (logical_operator)
+
+
+State 112
+
+  150 binary_operator: BOR .
+
+    $default  reduce using rule 150 (binary_operator)
+
+
+State 113
+
+  162 logical_operator: AND .
+
+    $default  reduce using rule 162 (logical_operator)
+
+
+State 114
+
+  152 binary_operator: TWAY .
+
+    $default  reduce using rule 152 (binary_operator)
+
+
+State 115
+
+  108 expression: expression binary_operator . expression
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 143
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 116
+
+  109 expression: expression relational_operator . expression
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 144
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 117
+
+  110 expression: expression logical_operator . expression
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 145
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 118
+
+  111 expression: cast_expression term .
+  119 term: term . PINC
+  120     | term . PDEC
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+
+    $default  reduce using rule 111 (expression)
+
+
+State 119
+
+  119 term: term PINC .
+
+    $default  reduce using rule 119 (term)
+
+
+State 120
+
+  120 term: term PDEC .
+
+    $default  reduce using rule 120 (term)
+
+
+State 121
+
+  107 expression: term EQ . expression
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 146
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 122
+
+  131 lhs: lhs LSQ . expression RSQ
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 147
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 123
+
+  116 term: unary_operator term .
+  119     | term . PINC
+  120     | term . PDEC
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+
+    PINC      [reduce using rule 116 (term)]
+    PDEC      [reduce using rule 116 (term)]
+    $default  reduce using rule 116 (term)
+
+
+State 124
+
+   40 var_dec_lhs: var_id LSQ expression RSQ .
+
+    $default  reduce using rule 40 (var_dec_lhs)
+
+
+State 125
+
+   26 stars: MUL .
+   27      | MUL . stars
+   43 var_id: MUL . $@6 var_id
+
+    MUL  shift, and go to state 139
+
+    VARIABLE  reduce using rule 42 ($@6)
+    MUL       [reduce using rule 42 ($@6)]
+    $default  reduce using rule 26 (stars)
+
+    stars  go to state 148
+    $@6    go to state 33
+
+
+State 126
+
+   25 pointer_type: type stars .
+
+    $default  reduce using rule 25 (pointer_type)
+
+
+State 127
+
+   50 proto_params: type var_id .
+   51             | type var_id . nd_bracket
+
+    LSQ  shift, and go to state 149
+
+    $default  reduce using rule 50 (proto_params)
+
+    nd_bracket  go to state 150
+
+
+State 128
+
+   44 fun_declaration: type var_id LPA proto_param_list RPA . compound_statement
+   45 fun_prototype: type var_id LPA proto_param_list RPA . SCOLON
+
+    LCU     shift, and go to state 151
+    SCOLON  shift, and go to state 152
+
+    compound_statement  go to state 153
+
+
+State 129
+
+   48 proto_param_list: proto_params COM . proto_param_list
+
+    CHAR    shift, and go to state 1
+    DOUBLE  shift, and go to state 2
+    EXTERN  shift, and go to state 3
+    FLOAT   shift, and go to state 4
+    INT     shift, and go to state 5
+    LONG    shift, and go to state 6
+    SHORT   shift, and go to state 7
+    STRUCT  shift, and go to state 23
+    VOID    shift, and go to state 9
+
+    $default  reduce using rule 46 (proto_param_list)
+
+    basic_type        go to state 14
+    type              go to state 70
+    pointer_type      go to state 71
+    proto_param_list  go to state 154
+    proto_params      go to state 73
+
+
+State 130
+
+   54 struct_definition: STRUCT VARIABLE LCU svar_declaration_list RCU SCOLON .
+
+    $default  reduce using rule 54 (struct_definition)
+
+
+State 131
+
+   55 struct_definition: STRUCT VARIABLE LCU svar_declaration_list RCU var_list .
+
+    $default  reduce using rule 55 (struct_definition)
+
+
+State 132
+
+   33 svar_list: svar_dec $@4 . SCOLON
+
+    SCOLON  shift, and go to state 155
+
+
+State 133
+
+   35 svar_list: svar_dec $@5 . COM svar_list
+
+    COM  shift, and go to state 156
+
+
+State 134
+
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+  135 argument_list: expression .
+
+    COM    shift, and go to state 95
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    COM       [reduce using rule 135 (argument_list)]
+    $default  reduce using rule 135 (argument_list)
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 135
+
+  132 function_call: VARIABLE LPA arguments . RPA
+
+    RPA  shift, and go to state 157
+
+
+State 136
+
+  133 arguments: argument_list .
+  136 argument_list: argument_list . COM expression
+
+    COM  shift, and go to state 158
+
+    $default  reduce using rule 133 (arguments)
+
+
+State 137
+
+  124 term: SIZEOF LPA pointer_type . RPA
+
+    RPA  shift, and go to state 159
+
+
+State 138
+
+  119 term: term . PINC
+  120     | term . PDEC
+  123     | SIZEOF LPA term . RPA
+
+    RPA   shift, and go to state 160
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+
+
+State 139
+
+   26 stars: MUL .
+   27      | MUL . stars
+
+    MUL  shift, and go to state 139
+
+    $default  reduce using rule 26 (stars)
+
+    stars  go to state 148
+
+
+State 140
+
+  113 cast_expression: LPA pointer_type RPA .
+
+    $default  reduce using rule 113 (cast_expression)
+
+
+State 141
+
+  128 term: LPA expression RPA .
+
+    $default  reduce using rule 128 (term)
+
+
+State 142
+
+  129 term: LCU expression RCU .
+
+    $default  reduce using rule 129 (term)
+
+
+State 143
+
+  108 expression: expression . binary_operator expression
+  108           | expression binary_operator expression .
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    COM       [reduce using rule 108 (expression)]
+    DOT       [reduce using rule 108 (expression)]
+    ARROW     [reduce using rule 108 (expression)]
+    BAND      [reduce using rule 108 (expression)]
+    MUL       [reduce using rule 108 (expression)]
+    ADD       [reduce using rule 108 (expression)]
+    SUB       [reduce using rule 108 (expression)]
+    DIV       [reduce using rule 108 (expression)]
+    MOD       [reduce using rule 108 (expression)]
+    LESS      [reduce using rule 108 (expression)]
+    GRTR      [reduce using rule 108 (expression)]
+    LEQ       [reduce using rule 108 (expression)]
+    GEQ       [reduce using rule 108 (expression)]
+    EEQ       [reduce using rule 108 (expression)]
+    NEQ       [reduce using rule 108 (expression)]
+    XOR       [reduce using rule 108 (expression)]
+    OR        [reduce using rule 108 (expression)]
+    BOR       [reduce using rule 108 (expression)]
+    AND       [reduce using rule 108 (expression)]
+    TWAY      [reduce using rule 108 (expression)]
+    $default  reduce using rule 108 (expression)
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 144
+
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  109           | expression relational_operator expression .
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    COM       [reduce using rule 109 (expression)]
+    DOT       [reduce using rule 109 (expression)]
+    ARROW     [reduce using rule 109 (expression)]
+    BAND      [reduce using rule 109 (expression)]
+    MUL       [reduce using rule 109 (expression)]
+    ADD       [reduce using rule 109 (expression)]
+    SUB       [reduce using rule 109 (expression)]
+    DIV       [reduce using rule 109 (expression)]
+    MOD       [reduce using rule 109 (expression)]
+    LESS      [reduce using rule 109 (expression)]
+    GRTR      [reduce using rule 109 (expression)]
+    LEQ       [reduce using rule 109 (expression)]
+    GEQ       [reduce using rule 109 (expression)]
+    EEQ       [reduce using rule 109 (expression)]
+    NEQ       [reduce using rule 109 (expression)]
+    XOR       [reduce using rule 109 (expression)]
+    OR        [reduce using rule 109 (expression)]
+    BOR       [reduce using rule 109 (expression)]
+    AND       [reduce using rule 109 (expression)]
+    TWAY      [reduce using rule 109 (expression)]
+    $default  reduce using rule 109 (expression)
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 145
+
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+  110           | expression logical_operator expression .
+
+    COM    shift, and go to state 95
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    COM       [reduce using rule 110 (expression)]
+    DOT       [reduce using rule 110 (expression)]
+    ARROW     [reduce using rule 110 (expression)]
+    BAND      [reduce using rule 110 (expression)]
+    MUL       [reduce using rule 110 (expression)]
+    ADD       [reduce using rule 110 (expression)]
+    SUB       [reduce using rule 110 (expression)]
+    DIV       [reduce using rule 110 (expression)]
+    MOD       [reduce using rule 110 (expression)]
+    LESS      [reduce using rule 110 (expression)]
+    GRTR      [reduce using rule 110 (expression)]
+    LEQ       [reduce using rule 110 (expression)]
+    GEQ       [reduce using rule 110 (expression)]
+    EEQ       [reduce using rule 110 (expression)]
+    NEQ       [reduce using rule 110 (expression)]
+    XOR       [reduce using rule 110 (expression)]
+    OR        [reduce using rule 110 (expression)]
+    BOR       [reduce using rule 110 (expression)]
+    AND       [reduce using rule 110 (expression)]
+    TWAY      [reduce using rule 110 (expression)]
+    $default  reduce using rule 110 (expression)
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 146
+
+  107 expression: term EQ expression .
+  108           | expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    COM       [reduce using rule 107 (expression)]
+    DOT       [reduce using rule 107 (expression)]
+    ARROW     [reduce using rule 107 (expression)]
+    BAND      [reduce using rule 107 (expression)]
+    MUL       [reduce using rule 107 (expression)]
+    ADD       [reduce using rule 107 (expression)]
+    SUB       [reduce using rule 107 (expression)]
+    DIV       [reduce using rule 107 (expression)]
+    MOD       [reduce using rule 107 (expression)]
+    LESS      [reduce using rule 107 (expression)]
+    GRTR      [reduce using rule 107 (expression)]
+    LEQ       [reduce using rule 107 (expression)]
+    GEQ       [reduce using rule 107 (expression)]
+    EEQ       [reduce using rule 107 (expression)]
+    NEQ       [reduce using rule 107 (expression)]
+    XOR       [reduce using rule 107 (expression)]
+    OR        [reduce using rule 107 (expression)]
+    BOR       [reduce using rule 107 (expression)]
+    AND       [reduce using rule 107 (expression)]
+    TWAY      [reduce using rule 107 (expression)]
+    $default  reduce using rule 107 (expression)
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 147
+
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+  131 lhs: lhs LSQ expression . RSQ
+
+    COM    shift, and go to state 95
+    RSQ    shift, and go to state 161
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 148
+
+   27 stars: MUL stars .
+
+    $default  reduce using rule 27 (stars)
+
+
+State 149
+
+   52 nd_bracket: LSQ . RSQ
+
+    RSQ  shift, and go to state 162
+
+
+State 150
+
+   51 proto_params: type var_id nd_bracket .
+   53 nd_bracket: nd_bracket . LSQ RSQ
+
+    LSQ  shift, and go to state 163
+
+    $default  reduce using rule 51 (proto_params)
+
+
+State 151
+
+   60 compound_statement: LCU . RCU
+   61                   | LCU . statement_list RCU
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CHAR      shift, and go to state 1
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    RETURN    shift, and go to state 171
+    SHORT     shift, and go to state 7
+    SIZEOF    shift, and go to state 46
+    STRUCT    shift, and go to state 8
+    SWITCH    shift, and go to state 172
+    VOID      shift, and go to state 9
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    RCU       shift, and go to state 175
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 176
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    var_declaration       go to state 177
+    basic_type            go to state 14
+    type                  go to state 178
+    struct_definition     go to state 179
+    decl_statement        go to state 180
+    statement_list        go to state 181
+    compound_statement    go to state 182
+    statement             go to state 183
+    if_statement          go to state 184
+    while_statement       go to state 185
+    switch_statement      go to state 186
+    return_statement      go to state 187
+    case_statement        go to state 188
+    continue_statement    go to state 189
+    break_statement       go to state 190
+    default_statement     go to state 191
+    assign_statement      go to state 192
+    for_statement         go to state 193
+    do_statement          go to state 194
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 197
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 152
+
+   45 fun_prototype: type var_id LPA proto_param_list RPA SCOLON .
+
+    $default  reduce using rule 45 (fun_prototype)
+
+
+State 153
+
+   44 fun_declaration: type var_id LPA proto_param_list RPA compound_statement .
+
+    $default  reduce using rule 44 (fun_declaration)
+
+
+State 154
+
+   48 proto_param_list: proto_params COM proto_param_list .
+
+    $default  reduce using rule 48 (proto_param_list)
+
+
+State 155
+
+   33 svar_list: svar_dec $@4 SCOLON .
+
+    $default  reduce using rule 33 (svar_list)
+
+
+State 156
+
+   35 svar_list: svar_dec $@5 COM . svar_list
+
+    VARIABLE  shift, and go to state 22
+    MUL       shift, and go to state 24
+
+    svar_list    go to state 198
+    svar_dec     go to state 77
+    var_dec_lhs  go to state 78
+    var_id       go to state 79
+
+
+State 157
+
+  132 function_call: VARIABLE LPA arguments RPA .
+
+    $default  reduce using rule 132 (function_call)
+
+
+State 158
+
+  136 argument_list: argument_list COM . expression
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 199
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 159
+
+  124 term: SIZEOF LPA pointer_type RPA .
+
+    $default  reduce using rule 124 (term)
+
+
+State 160
+
+  123 term: SIZEOF LPA term RPA .
+
+    $default  reduce using rule 123 (term)
+
+
+State 161
+
+  131 lhs: lhs LSQ expression RSQ .
+
+    $default  reduce using rule 131 (lhs)
+
+
+State 162
+
+   52 nd_bracket: LSQ RSQ .
+
+    $default  reduce using rule 52 (nd_bracket)
+
+
+State 163
+
+   53 nd_bracket: nd_bracket LSQ . RSQ
+
+    RSQ  shift, and go to state 200
+
+
+State 164
+
+   99 break_statement: BREAK . SCOLON
+
+    SCOLON  shift, and go to state 201
+
+
+State 165
+
+   97 case_statement: CASE . expression COL statement_list
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 202
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 166
+
+   98 continue_statement: CONTINUE . SCOLON
+
+    SCOLON  shift, and go to state 203
+
+
+State 167
+
+  100 default_statement: DEFAULT . COL statement_list
+
+    COL  shift, and go to state 204
+
+
+State 168
+
+  106 do_statement: DO . lstatement WHILE LPA expression RPA SCOLON
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    RETURN    shift, and go to state 171
+    SIZEOF    shift, and go to state 46
+    SWITCH    shift, and go to state 172
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 205
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    compound_statement    go to state 206
+    lstatement            go to state 207
+    if_statement          go to state 208
+    while_statement       go to state 209
+    switch_statement      go to state 210
+    return_statement      go to state 211
+    case_statement        go to state 212
+    continue_statement    go to state 213
+    break_statement       go to state 214
+    default_statement     go to state 215
+    assign_statement      go to state 216
+    for_statement         go to state 217
+    do_statement          go to state 218
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 219
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 169
+
+  104 for_statement: FOR . LPA exp_wrap SCOLON exp_wrap SCOLON exp_wrap RPA lstatement
+  105              | FOR . LPA var_declaration exp_wrap SCOLON exp_wrap RPA lstatement
+
+    LPA  shift, and go to state 220
+
+
+State 170
+
+   91 if_statement: IF . LPA expression RPA lstatement
+   92             | IF . LPA expression RPA lstatement ELSE lstatement
+
+    LPA  shift, and go to state 221
+
+
+State 171
+
+   95 return_statement: RETURN . SCOLON
+   96                 | RETURN . expression SCOLON
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 222
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 223
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 172
+
+   94 switch_statement: SWITCH . LPA expression RPA lstatement
+
+    LPA  shift, and go to state 224
+
+
+State 173
+
+   93 while_statement: WHILE . LPA expression RPA lstatement
+
+    LPA  shift, and go to state 225
+
+
+State 174
+
+   60 compound_statement: LCU . RCU
+   61                   | LCU . statement_list RCU
+  129 term: LCU . expression RCU
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CHAR      shift, and go to state 1
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    RETURN    shift, and go to state 171
+    SHORT     shift, and go to state 7
+    SIZEOF    shift, and go to state 46
+    STRUCT    shift, and go to state 8
+    SWITCH    shift, and go to state 172
+    VOID      shift, and go to state 9
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    RCU       shift, and go to state 175
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 176
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    var_declaration       go to state 177
+    basic_type            go to state 14
+    type                  go to state 178
+    struct_definition     go to state 179
+    decl_statement        go to state 180
+    statement_list        go to state 181
+    compound_statement    go to state 182
+    statement             go to state 183
+    if_statement          go to state 184
+    while_statement       go to state 185
+    switch_statement      go to state 186
+    return_statement      go to state 187
+    case_statement        go to state 188
+    continue_statement    go to state 189
+    break_statement       go to state 190
+    default_statement     go to state 191
+    assign_statement      go to state 192
+    for_statement         go to state 193
+    do_statement          go to state 194
+    expression            go to state 226
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 197
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 175
+
+   60 compound_statement: LCU RCU .
+
+    $default  reduce using rule 60 (compound_statement)
+
+
+State 176
+
+   76 statement: SCOLON .
+
+    $default  reduce using rule 76 (statement)
+
+
+State 177
+
+   56 decl_statement: var_declaration .
+
+    $default  reduce using rule 56 (decl_statement)
+
+
+State 178
+
+    9 var_declaration: type . var_list
+   23 type: type . basic_type
+
+    VARIABLE  shift, and go to state 22
+    CHAR      shift, and go to state 1
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    SHORT     shift, and go to state 7
+    STRUCT    shift, and go to state 23
+    VOID      shift, and go to state 9
+    MUL       shift, and go to state 24
+
+    basic_type   go to state 25
+    var_list     go to state 26
+    var_dec      go to state 27
+    var_dec_lhs  go to state 28
+    var_id       go to state 79
+
+
+State 179
+
+   57 decl_statement: struct_definition .
+
+    $default  reduce using rule 57 (decl_statement)
+
+
+State 180
+
+   63 statement: decl_statement .
+
+    $default  reduce using rule 63 (statement)
+
+
+State 181
+
+   61 compound_statement: LCU statement_list . RCU
+
+    RCU  shift, and go to state 227
+
+
+State 182
+
+   62 statement: compound_statement .
+
+    $default  reduce using rule 62 (statement)
+
+
+State 183
+
+   58 statement_list: statement .
+   59               | statement . statement_list
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CHAR      shift, and go to state 1
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    RETURN    shift, and go to state 171
+    SHORT     shift, and go to state 7
+    SIZEOF    shift, and go to state 46
+    STRUCT    shift, and go to state 8
+    SWITCH    shift, and go to state 172
+    VOID      shift, and go to state 9
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 176
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    VARIABLE  [reduce using rule 58 (statement_list)]
+    BREAK     [reduce using rule 58 (statement_list)]
+    CASE      [reduce using rule 58 (statement_list)]
+    CHAR      [reduce using rule 58 (statement_list)]
+    CONTINUE  [reduce using rule 58 (statement_list)]
+    DEFAULT   [reduce using rule 58 (statement_list)]
+    DO        [reduce using rule 58 (statement_list)]
+    DOUBLE    [reduce using rule 58 (statement_list)]
+    EXTERN    [reduce using rule 58 (statement_list)]
+    FLOAT     [reduce using rule 58 (statement_list)]
+    FOR       [reduce using rule 58 (statement_list)]
+    IF        [reduce using rule 58 (statement_list)]
+    INT       [reduce using rule 58 (statement_list)]
+    LONG      [reduce using rule 58 (statement_list)]
+    RETURN    [reduce using rule 58 (statement_list)]
+    SHORT     [reduce using rule 58 (statement_list)]
+    SIZEOF    [reduce using rule 58 (statement_list)]
+    STRUCT    [reduce using rule 58 (statement_list)]
+    SWITCH    [reduce using rule 58 (statement_list)]
+    VOID      [reduce using rule 58 (statement_list)]
+    WHILE     [reduce using rule 58 (statement_list)]
+    LPA       [reduce using rule 58 (statement_list)]
+    LCU       [reduce using rule 58 (statement_list)]
+    PINC      [reduce using rule 58 (statement_list)]
+    PDEC      [reduce using rule 58 (statement_list)]
+    BAND      [reduce using rule 58 (statement_list)]
+    MUL       [reduce using rule 58 (statement_list)]
+    ADD       [reduce using rule 58 (statement_list)]
+    SUB       [reduce using rule 58 (statement_list)]
+    NEG       [reduce using rule 58 (statement_list)]
+    NOT       [reduce using rule 58 (statement_list)]
+    SCONST    [reduce using rule 58 (statement_list)]
+    SCOLON    [reduce using rule 58 (statement_list)]
+    FCONST    [reduce using rule 58 (statement_list)]
+    ICONST    [reduce using rule 58 (statement_list)]
+    CCONST    [reduce using rule 58 (statement_list)]
+    $default  reduce using rule 58 (statement_list)
+
+    var_declaration       go to state 177
+    basic_type            go to state 14
+    type                  go to state 178
+    struct_definition     go to state 179
+    decl_statement        go to state 180
+    statement_list        go to state 228
+    compound_statement    go to state 182
+    statement             go to state 183
+    if_statement          go to state 184
+    while_statement       go to state 185
+    switch_statement      go to state 186
+    return_statement      go to state 187
+    case_statement        go to state 188
+    continue_statement    go to state 189
+    break_statement       go to state 190
+    default_statement     go to state 191
+    assign_statement      go to state 192
+    for_statement         go to state 193
+    do_statement          go to state 194
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 197
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 184
+
+   64 statement: if_statement .
+
+    $default  reduce using rule 64 (statement)
+
+
+State 185
+
+   65 statement: while_statement .
+
+    $default  reduce using rule 65 (statement)
+
+
+State 186
+
+   66 statement: switch_statement .
+
+    $default  reduce using rule 66 (statement)
+
+
+State 187
+
+   67 statement: return_statement .
+
+    $default  reduce using rule 67 (statement)
+
+
+State 188
+
+   69 statement: case_statement .
+
+    $default  reduce using rule 69 (statement)
+
+
+State 189
+
+   72 statement: continue_statement .
+
+    $default  reduce using rule 72 (statement)
+
+
+State 190
+
+   68 statement: break_statement .
+
+    $default  reduce using rule 68 (statement)
+
+
+State 191
+
+   73 statement: default_statement .
+
+    $default  reduce using rule 73 (statement)
+
+
+State 192
+
+   70 statement: assign_statement .
+
+    $default  reduce using rule 70 (statement)
+
+
+State 193
+
+   71 statement: for_statement .
+
+    $default  reduce using rule 71 (statement)
+
+
+State 194
+
+   74 statement: do_statement .
+
+    $default  reduce using rule 74 (statement)
+
+
+State 195
+
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+  137 expression_statement: expression . SCOLON
+
+    COM     shift, and go to state 95
+    DOT     shift, and go to state 96
+    ARROW   shift, and go to state 97
+    BAND    shift, and go to state 98
+    MUL     shift, and go to state 99
+    ADD     shift, and go to state 100
+    SUB     shift, and go to state 101
+    DIV     shift, and go to state 102
+    MOD     shift, and go to state 103
+    LESS    shift, and go to state 104
+    GRTR    shift, and go to state 105
+    LEQ     shift, and go to state 106
+    GEQ     shift, and go to state 107
+    EEQ     shift, and go to state 108
+    NEQ     shift, and go to state 109
+    XOR     shift, and go to state 110
+    OR      shift, and go to state 111
+    BOR     shift, and go to state 112
+    AND     shift, and go to state 113
+    TWAY    shift, and go to state 114
+    SCOLON  shift, and go to state 229
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 196
+
+  101 assign_statement: term . EQ expression SCOLON
+  107 expression: term . EQ expression
+  112           | term .
+  119 term: term . PINC
+  120     | term . PDEC
+
+    PINC  shift, and go to state 119
+    PDEC  shift, and go to state 120
+    EQ    shift, and go to state 230
+
+    $default  reduce using rule 112 (expression)
+
+
+State 197
+
+   75 statement: expression_statement .
+
+    $default  reduce using rule 75 (statement)
+
+
+State 198
+
+   35 svar_list: svar_dec $@5 COM svar_list .
+
+    $default  reduce using rule 35 (svar_list)
+
+
+State 199
+
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+  136 argument_list: argument_list COM expression .
+
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    $default  reduce using rule 136 (argument_list)
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 200
+
+   53 nd_bracket: nd_bracket LSQ RSQ .
+
+    $default  reduce using rule 53 (nd_bracket)
+
+
+State 201
+
+   99 break_statement: BREAK SCOLON .
+
+    $default  reduce using rule 99 (break_statement)
+
+
+State 202
+
+   97 case_statement: CASE expression . COL statement_list
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COL    shift, and go to state 231
+    COM    shift, and go to state 95
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 203
+
+   98 continue_statement: CONTINUE SCOLON .
+
+    $default  reduce using rule 98 (continue_statement)
+
+
+State 204
+
+  100 default_statement: DEFAULT COL . statement_list
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CHAR      shift, and go to state 1
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    RETURN    shift, and go to state 171
+    SHORT     shift, and go to state 7
+    SIZEOF    shift, and go to state 46
+    STRUCT    shift, and go to state 8
+    SWITCH    shift, and go to state 172
+    VOID      shift, and go to state 9
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 176
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    var_declaration       go to state 177
+    basic_type            go to state 14
+    type                  go to state 178
+    struct_definition     go to state 179
+    decl_statement        go to state 180
+    statement_list        go to state 232
+    compound_statement    go to state 182
+    statement             go to state 183
+    if_statement          go to state 184
+    while_statement       go to state 185
+    switch_statement      go to state 186
+    return_statement      go to state 187
+    case_statement        go to state 188
+    continue_statement    go to state 189
+    break_statement       go to state 190
+    default_statement     go to state 191
+    assign_statement      go to state 192
+    for_statement         go to state 193
+    do_statement          go to state 194
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 197
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 205
+
+   90 lstatement: SCOLON .
+
+    $default  reduce using rule 90 (lstatement)
+
+
+State 206
+
+   77 lstatement: compound_statement .
+
+    $default  reduce using rule 77 (lstatement)
+
+
+State 207
+
+  106 do_statement: DO lstatement . WHILE LPA expression RPA SCOLON
+
+    WHILE  shift, and go to state 233
+
+
+State 208
+
+   78 lstatement: if_statement .
+
+    $default  reduce using rule 78 (lstatement)
+
+
+State 209
+
+   79 lstatement: while_statement .
+
+    $default  reduce using rule 79 (lstatement)
+
+
+State 210
+
+   80 lstatement: switch_statement .
+
+    $default  reduce using rule 80 (lstatement)
+
+
+State 211
+
+   81 lstatement: return_statement .
+
+    $default  reduce using rule 81 (lstatement)
+
+
+State 212
+
+   83 lstatement: case_statement .
+
+    $default  reduce using rule 83 (lstatement)
+
+
+State 213
+
+   86 lstatement: continue_statement .
+
+    $default  reduce using rule 86 (lstatement)
+
+
+State 214
+
+   82 lstatement: break_statement .
+
+    $default  reduce using rule 82 (lstatement)
+
+
+State 215
+
+   87 lstatement: default_statement .
+
+    $default  reduce using rule 87 (lstatement)
+
+
+State 216
+
+   84 lstatement: assign_statement .
+
+    $default  reduce using rule 84 (lstatement)
+
+
+State 217
+
+   85 lstatement: for_statement .
+
+    $default  reduce using rule 85 (lstatement)
+
+
+State 218
+
+   88 lstatement: do_statement .
+
+    $default  reduce using rule 88 (lstatement)
+
+
+State 219
+
+   89 lstatement: expression_statement .
+
+    $default  reduce using rule 89 (lstatement)
+
+
+State 220
+
+  104 for_statement: FOR LPA . exp_wrap SCOLON exp_wrap SCOLON exp_wrap RPA lstatement
+  105              | FOR LPA . var_declaration exp_wrap SCOLON exp_wrap RPA lstatement
+
+    VARIABLE  shift, and go to state 45
+    CHAR      shift, and go to state 1
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    SHORT     shift, and go to state 7
+    SIZEOF    shift, and go to state 46
+    STRUCT    shift, and go to state 23
+    VOID      shift, and go to state 9
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    $default  reduce using rule 102 (exp_wrap)
+
+    var_declaration  go to state 234
+    basic_type       go to state 14
+    type             go to state 178
+    exp_wrap         go to state 235
+    expression       go to state 236
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 221
+
+   91 if_statement: IF LPA . expression RPA lstatement
+   92             | IF LPA . expression RPA lstatement ELSE lstatement
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 237
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 222
+
+   95 return_statement: RETURN SCOLON .
+
+    $default  reduce using rule 95 (return_statement)
+
+
+State 223
+
+   96 return_statement: RETURN expression . SCOLON
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM     shift, and go to state 95
+    DOT     shift, and go to state 96
+    ARROW   shift, and go to state 97
+    BAND    shift, and go to state 98
+    MUL     shift, and go to state 99
+    ADD     shift, and go to state 100
+    SUB     shift, and go to state 101
+    DIV     shift, and go to state 102
+    MOD     shift, and go to state 103
+    LESS    shift, and go to state 104
+    GRTR    shift, and go to state 105
+    LEQ     shift, and go to state 106
+    GEQ     shift, and go to state 107
+    EEQ     shift, and go to state 108
+    NEQ     shift, and go to state 109
+    XOR     shift, and go to state 110
+    OR      shift, and go to state 111
+    BOR     shift, and go to state 112
+    AND     shift, and go to state 113
+    TWAY    shift, and go to state 114
+    SCOLON  shift, and go to state 238
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 224
+
+   94 switch_statement: SWITCH LPA . expression RPA lstatement
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 239
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 225
+
+   93 while_statement: WHILE LPA . expression RPA lstatement
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 240
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 226
+
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+  129 term: LCU expression . RCU
+  137 expression_statement: expression . SCOLON
+
+    COM     shift, and go to state 95
+    RCU     shift, and go to state 142
+    DOT     shift, and go to state 96
+    ARROW   shift, and go to state 97
+    BAND    shift, and go to state 98
+    MUL     shift, and go to state 99
+    ADD     shift, and go to state 100
+    SUB     shift, and go to state 101
+    DIV     shift, and go to state 102
+    MOD     shift, and go to state 103
+    LESS    shift, and go to state 104
+    GRTR    shift, and go to state 105
+    LEQ     shift, and go to state 106
+    GEQ     shift, and go to state 107
+    EEQ     shift, and go to state 108
+    NEQ     shift, and go to state 109
+    XOR     shift, and go to state 110
+    OR      shift, and go to state 111
+    BOR     shift, and go to state 112
+    AND     shift, and go to state 113
+    TWAY    shift, and go to state 114
+    SCOLON  shift, and go to state 229
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 227
+
+   61 compound_statement: LCU statement_list RCU .
+
+    $default  reduce using rule 61 (compound_statement)
+
+
+State 228
+
+   59 statement_list: statement statement_list .
+
+    $default  reduce using rule 59 (statement_list)
+
+
+State 229
+
+  137 expression_statement: expression SCOLON .
+
+    $default  reduce using rule 137 (expression_statement)
+
+
+State 230
+
+  101 assign_statement: term EQ . expression SCOLON
+  107 expression: term EQ . expression
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 241
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 231
+
+   97 case_statement: CASE expression COL . statement_list
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CHAR      shift, and go to state 1
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    DOUBLE    shift, and go to state 2
+    EXTERN    shift, and go to state 3
+    FLOAT     shift, and go to state 4
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    INT       shift, and go to state 5
+    LONG      shift, and go to state 6
+    RETURN    shift, and go to state 171
+    SHORT     shift, and go to state 7
+    SIZEOF    shift, and go to state 46
+    STRUCT    shift, and go to state 8
+    SWITCH    shift, and go to state 172
+    VOID      shift, and go to state 9
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 176
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    var_declaration       go to state 177
+    basic_type            go to state 14
+    type                  go to state 178
+    struct_definition     go to state 179
+    decl_statement        go to state 180
+    statement_list        go to state 242
+    compound_statement    go to state 182
+    statement             go to state 183
+    if_statement          go to state 184
+    while_statement       go to state 185
+    switch_statement      go to state 186
+    return_statement      go to state 187
+    case_statement        go to state 188
+    continue_statement    go to state 189
+    break_statement       go to state 190
+    default_statement     go to state 191
+    assign_statement      go to state 192
+    for_statement         go to state 193
+    do_statement          go to state 194
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 197
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 232
+
+  100 default_statement: DEFAULT COL statement_list .
+
+    $default  reduce using rule 100 (default_statement)
+
+
+State 233
+
+  106 do_statement: DO lstatement WHILE . LPA expression RPA SCOLON
+
+    LPA  shift, and go to state 243
+
+
+State 234
+
+  105 for_statement: FOR LPA var_declaration . exp_wrap SCOLON exp_wrap RPA lstatement
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    $default  reduce using rule 102 (exp_wrap)
+
+    exp_wrap         go to state 244
+    expression       go to state 236
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 235
+
+  104 for_statement: FOR LPA exp_wrap . SCOLON exp_wrap SCOLON exp_wrap RPA lstatement
+
+    SCOLON  shift, and go to state 245
+
+
+State 236
+
+  103 exp_wrap: expression .
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    $default  reduce using rule 103 (exp_wrap)
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 237
+
+   91 if_statement: IF LPA expression . RPA lstatement
+   92             | IF LPA expression . RPA lstatement ELSE lstatement
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    RPA    shift, and go to state 246
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 238
+
+   96 return_statement: RETURN expression SCOLON .
+
+    $default  reduce using rule 96 (return_statement)
+
+
+State 239
+
+   94 switch_statement: SWITCH LPA expression . RPA lstatement
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    RPA    shift, and go to state 247
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 240
+
+   93 while_statement: WHILE LPA expression . RPA lstatement
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    RPA    shift, and go to state 248
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 241
+
+  101 assign_statement: term EQ expression . SCOLON
+  107 expression: term EQ expression .
+  108           | expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM     shift, and go to state 95
+    DOT     shift, and go to state 96
+    ARROW   shift, and go to state 97
+    BAND    shift, and go to state 98
+    MUL     shift, and go to state 99
+    ADD     shift, and go to state 100
+    SUB     shift, and go to state 101
+    DIV     shift, and go to state 102
+    MOD     shift, and go to state 103
+    LESS    shift, and go to state 104
+    GRTR    shift, and go to state 105
+    LEQ     shift, and go to state 106
+    GEQ     shift, and go to state 107
+    EEQ     shift, and go to state 108
+    NEQ     shift, and go to state 109
+    XOR     shift, and go to state 110
+    OR      shift, and go to state 111
+    BOR     shift, and go to state 112
+    AND     shift, and go to state 113
+    TWAY    shift, and go to state 114
+    SCOLON  shift, and go to state 249
+
+    COM       [reduce using rule 107 (expression)]
+    DOT       [reduce using rule 107 (expression)]
+    ARROW     [reduce using rule 107 (expression)]
+    BAND      [reduce using rule 107 (expression)]
+    MUL       [reduce using rule 107 (expression)]
+    ADD       [reduce using rule 107 (expression)]
+    SUB       [reduce using rule 107 (expression)]
+    DIV       [reduce using rule 107 (expression)]
+    MOD       [reduce using rule 107 (expression)]
+    LESS      [reduce using rule 107 (expression)]
+    GRTR      [reduce using rule 107 (expression)]
+    LEQ       [reduce using rule 107 (expression)]
+    GEQ       [reduce using rule 107 (expression)]
+    EEQ       [reduce using rule 107 (expression)]
+    NEQ       [reduce using rule 107 (expression)]
+    XOR       [reduce using rule 107 (expression)]
+    OR        [reduce using rule 107 (expression)]
+    BOR       [reduce using rule 107 (expression)]
+    AND       [reduce using rule 107 (expression)]
+    TWAY      [reduce using rule 107 (expression)]
+    SCOLON    [reduce using rule 107 (expression)]
+    $default  reduce using rule 107 (expression)
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 242
+
+   97 case_statement: CASE expression COL statement_list .
+
+    $default  reduce using rule 97 (case_statement)
+
+
+State 243
+
+  106 do_statement: DO lstatement WHILE LPA . expression RPA SCOLON
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    expression       go to state 250
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 244
+
+  105 for_statement: FOR LPA var_declaration exp_wrap . SCOLON exp_wrap RPA lstatement
+
+    SCOLON  shift, and go to state 251
+
+
+State 245
+
+  104 for_statement: FOR LPA exp_wrap SCOLON . exp_wrap SCOLON exp_wrap RPA lstatement
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    $default  reduce using rule 102 (exp_wrap)
+
+    exp_wrap         go to state 252
+    expression       go to state 236
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 246
+
+   91 if_statement: IF LPA expression RPA . lstatement
+   92             | IF LPA expression RPA . lstatement ELSE lstatement
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    RETURN    shift, and go to state 171
+    SIZEOF    shift, and go to state 46
+    SWITCH    shift, and go to state 172
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 205
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    compound_statement    go to state 206
+    lstatement            go to state 253
+    if_statement          go to state 208
+    while_statement       go to state 209
+    switch_statement      go to state 210
+    return_statement      go to state 211
+    case_statement        go to state 212
+    continue_statement    go to state 213
+    break_statement       go to state 214
+    default_statement     go to state 215
+    assign_statement      go to state 216
+    for_statement         go to state 217
+    do_statement          go to state 218
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 219
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 247
+
+   94 switch_statement: SWITCH LPA expression RPA . lstatement
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    RETURN    shift, and go to state 171
+    SIZEOF    shift, and go to state 46
+    SWITCH    shift, and go to state 172
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 205
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    compound_statement    go to state 206
+    lstatement            go to state 254
+    if_statement          go to state 208
+    while_statement       go to state 209
+    switch_statement      go to state 210
+    return_statement      go to state 211
+    case_statement        go to state 212
+    continue_statement    go to state 213
+    break_statement       go to state 214
+    default_statement     go to state 215
+    assign_statement      go to state 216
+    for_statement         go to state 217
+    do_statement          go to state 218
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 219
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 248
+
+   93 while_statement: WHILE LPA expression RPA . lstatement
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    RETURN    shift, and go to state 171
+    SIZEOF    shift, and go to state 46
+    SWITCH    shift, and go to state 172
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 205
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    compound_statement    go to state 206
+    lstatement            go to state 255
+    if_statement          go to state 208
+    while_statement       go to state 209
+    switch_statement      go to state 210
+    return_statement      go to state 211
+    case_statement        go to state 212
+    continue_statement    go to state 213
+    break_statement       go to state 214
+    default_statement     go to state 215
+    assign_statement      go to state 216
+    for_statement         go to state 217
+    do_statement          go to state 218
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 219
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 249
+
+  101 assign_statement: term EQ expression SCOLON .
+
+    $default  reduce using rule 101 (assign_statement)
+
+
+State 250
+
+  106 do_statement: DO lstatement WHILE LPA expression . RPA SCOLON
+  108 expression: expression . binary_operator expression
+  109           | expression . relational_operator expression
+  110           | expression . logical_operator expression
+
+    COM    shift, and go to state 95
+    RPA    shift, and go to state 256
+    DOT    shift, and go to state 96
+    ARROW  shift, and go to state 97
+    BAND   shift, and go to state 98
+    MUL    shift, and go to state 99
+    ADD    shift, and go to state 100
+    SUB    shift, and go to state 101
+    DIV    shift, and go to state 102
+    MOD    shift, and go to state 103
+    LESS   shift, and go to state 104
+    GRTR   shift, and go to state 105
+    LEQ    shift, and go to state 106
+    GEQ    shift, and go to state 107
+    EEQ    shift, and go to state 108
+    NEQ    shift, and go to state 109
+    XOR    shift, and go to state 110
+    OR     shift, and go to state 111
+    BOR    shift, and go to state 112
+    AND    shift, and go to state 113
+    TWAY   shift, and go to state 114
+
+    binary_operator      go to state 115
+    relational_operator  go to state 116
+    logical_operator     go to state 117
+
+
+State 251
+
+  105 for_statement: FOR LPA var_declaration exp_wrap SCOLON . exp_wrap RPA lstatement
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    $default  reduce using rule 102 (exp_wrap)
+
+    exp_wrap         go to state 257
+    expression       go to state 236
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 252
+
+  104 for_statement: FOR LPA exp_wrap SCOLON exp_wrap . SCOLON exp_wrap RPA lstatement
+
+    SCOLON  shift, and go to state 258
+
+
+State 253
+
+   91 if_statement: IF LPA expression RPA lstatement .
+   92             | IF LPA expression RPA lstatement . ELSE lstatement
+
+    ELSE  shift, and go to state 259
+
+    ELSE      [reduce using rule 91 (if_statement)]
+    $default  reduce using rule 91 (if_statement)
+
+
+State 254
+
+   94 switch_statement: SWITCH LPA expression RPA lstatement .
+
+    $default  reduce using rule 94 (switch_statement)
+
+
+State 255
+
+   93 while_statement: WHILE LPA expression RPA lstatement .
+
+    $default  reduce using rule 93 (while_statement)
+
+
+State 256
+
+  106 do_statement: DO lstatement WHILE LPA expression RPA . SCOLON
+
+    SCOLON  shift, and go to state 260
+
+
+State 257
+
+  105 for_statement: FOR LPA var_declaration exp_wrap SCOLON exp_wrap . RPA lstatement
+
+    RPA  shift, and go to state 261
+
+
+State 258
+
+  104 for_statement: FOR LPA exp_wrap SCOLON exp_wrap SCOLON . exp_wrap RPA lstatement
+
+    VARIABLE  shift, and go to state 45
+    SIZEOF    shift, and go to state 46
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 48
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    $default  reduce using rule 102 (exp_wrap)
+
+    exp_wrap         go to state 262
+    expression       go to state 236
+    cast_expression  go to state 62
+    term             go to state 63
+    lhs              go to state 64
+    function_call    go to state 65
+    constants        go to state 66
+    multisconsts     go to state 67
+    unary_operator   go to state 68
+
+
+State 259
+
+   92 if_statement: IF LPA expression RPA lstatement ELSE . lstatement
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    RETURN    shift, and go to state 171
+    SIZEOF    shift, and go to state 46
+    SWITCH    shift, and go to state 172
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 205
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    compound_statement    go to state 206
+    lstatement            go to state 263
+    if_statement          go to state 208
+    while_statement       go to state 209
+    switch_statement      go to state 210
+    return_statement      go to state 211
+    case_statement        go to state 212
+    continue_statement    go to state 213
+    break_statement       go to state 214
+    default_statement     go to state 215
+    assign_statement      go to state 216
+    for_statement         go to state 217
+    do_statement          go to state 218
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 219
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 260
+
+  106 do_statement: DO lstatement WHILE LPA expression RPA SCOLON .
+
+    $default  reduce using rule 106 (do_statement)
+
+
+State 261
+
+  105 for_statement: FOR LPA var_declaration exp_wrap SCOLON exp_wrap RPA . lstatement
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    RETURN    shift, and go to state 171
+    SIZEOF    shift, and go to state 46
+    SWITCH    shift, and go to state 172
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 205
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    compound_statement    go to state 206
+    lstatement            go to state 264
+    if_statement          go to state 208
+    while_statement       go to state 209
+    switch_statement      go to state 210
+    return_statement      go to state 211
+    case_statement        go to state 212
+    continue_statement    go to state 213
+    break_statement       go to state 214
+    default_statement     go to state 215
+    assign_statement      go to state 216
+    for_statement         go to state 217
+    do_statement          go to state 218
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 219
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 262
+
+  104 for_statement: FOR LPA exp_wrap SCOLON exp_wrap SCOLON exp_wrap . RPA lstatement
+
+    RPA  shift, and go to state 265
+
+
+State 263
+
+   92 if_statement: IF LPA expression RPA lstatement ELSE lstatement .
+
+    $default  reduce using rule 92 (if_statement)
+
+
+State 264
+
+  105 for_statement: FOR LPA var_declaration exp_wrap SCOLON exp_wrap RPA lstatement .
+
+    $default  reduce using rule 105 (for_statement)
+
+
+State 265
+
+  104 for_statement: FOR LPA exp_wrap SCOLON exp_wrap SCOLON exp_wrap RPA . lstatement
+
+    VARIABLE  shift, and go to state 45
+    BREAK     shift, and go to state 164
+    CASE      shift, and go to state 165
+    CONTINUE  shift, and go to state 166
+    DEFAULT   shift, and go to state 167
+    DO        shift, and go to state 168
+    FOR       shift, and go to state 169
+    IF        shift, and go to state 170
+    RETURN    shift, and go to state 171
+    SIZEOF    shift, and go to state 46
+    SWITCH    shift, and go to state 172
+    WHILE     shift, and go to state 173
+    LPA       shift, and go to state 47
+    LCU       shift, and go to state 174
+    PINC      shift, and go to state 49
+    PDEC      shift, and go to state 50
+    BAND      shift, and go to state 51
+    MUL       shift, and go to state 52
+    ADD       shift, and go to state 53
+    SUB       shift, and go to state 54
+    NEG       shift, and go to state 55
+    NOT       shift, and go to state 56
+    SCONST    shift, and go to state 57
+    SCOLON    shift, and go to state 205
+    FCONST    shift, and go to state 58
+    ICONST    shift, and go to state 59
+    CCONST    shift, and go to state 60
+
+    compound_statement    go to state 206
+    lstatement            go to state 266
+    if_statement          go to state 208
+    while_statement       go to state 209
+    switch_statement      go to state 210
+    return_statement      go to state 211
+    case_statement        go to state 212
+    continue_statement    go to state 213
+    break_statement       go to state 214
+    default_statement     go to state 215
+    assign_statement      go to state 216
+    for_statement         go to state 217
+    do_statement          go to state 218
+    expression            go to state 195
+    cast_expression       go to state 62
+    term                  go to state 196
+    lhs                   go to state 64
+    function_call         go to state 65
+    expression_statement  go to state 219
+    constants             go to state 66
+    multisconsts          go to state 67
+    unary_operator        go to state 68
+
+
+State 266
+
+  104 for_statement: FOR LPA exp_wrap SCOLON exp_wrap SCOLON exp_wrap RPA lstatement .
+
+    $default  reduce using rule 104 (for_statement)
